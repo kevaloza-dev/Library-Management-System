@@ -2,8 +2,11 @@
 
 This is a full-stack Library Management System built with a React/Vite frontend, a NestJS backend, and a PostgreSQL database, all orchestrated with Docker Compose.
 
+---
+
 ## Table of Contents
 
+- [Project Structure](#project-structure)
 - [Prerequisites](#prerequisites)
 - [Getting Started with Docker Compose](#getting-started-with-docker-compose)
   - [1. Configure PostgreSQL Credentials](#1-configure-postgresql-credentials)
@@ -18,12 +21,217 @@ This is a full-stack Library Management System built with a React/Vite frontend,
   - [Invalid ELF Header / bcrypt error](#invalid-elf-header--bcrypt-error)
   - [Tailwind CSS not rendering](#tailwind-css-not-rendering)
 - [Local Development (Without Docker)](#local-development-without-docker)
+  - [Backend Setup](#backend-setup)
+  - [Frontend Setup](#frontend-setup)
+
+---
+
+## Project Structure
+
+```
+C:\Users\dhrumiloza\Desktop\Keval_Docs\InternshiProjectLMS\LibraryManagementSystem\
+├───.gitignore
+├───API_DOCUMENTATION.md
+├───components.json
+├───docker-compose.yml
+├───next.config.mjs
+├───package.json
+├───pnpm-lock.yaml
+├───postcss.config.mjs
+├───README.md
+├───SYSTEM_SETUP.md
+├───tsconfig.json
+├───.git\...
+├───app\
+│   ├───globals.css
+│   ├───layout.tsx
+│   └───page.tsx
+├───backend\
+│   ├───.dockerignore
+│   ├───Dockerfile
+│   ├───package-lock.json
+│   ├───package.json
+│   ├───tsconfig.json
+│   ├───node_modules\...
+│   ├───prisma\
+│   │   ├───package.json
+│   │   ├───schema.prisma
+│   │   └───seed.ts
+│   └───src\
+│       ├───app.module.ts
+│       ├───main.ts
+│       ├───auth\
+│       │   ├───auth.controller.ts
+│       │   ├───auth.module.ts
+│       │   ├───auth.service.ts
+│       │   ├───dto\
+│       │   │   └───login.dto.ts
+│       │   ├───guards\
+│       │   │   └───jwt.guard.ts
+│       │   └───strategies\
+│       │       └───jwt.strategy.ts
+│       ├───authors\
+│       │   ├───authors.controller.ts
+│       │   ├───authors.module.ts
+│       │   ├───authors.service.ts
+│       │   └───dto\
+│       │       ├───create-author.dto.ts
+│       │       └───update-author.dto.ts
+│       ├───books\
+│       │   ├───books.controller.ts
+│       │   ├───books.module.ts
+│       │   ├───books.service.ts
+│       │   └───dto\
+│       │       ├───create-book.dto.ts
+│       │       └───update-book.dto.ts
+│       ├───borrow-records\
+│       │   ├───borrow-records.controller.ts
+│       │   ├───borrow-records.module.ts
+│       │   ├───borrow-records.service.ts
+│       │   └───dto\
+│       │       ├───create-borrow-record.dto.ts
+│       │       └───update-borrow-record.dto.ts
+│       ├───prisma\
+│       │   ├───prisma.module.ts
+│       │   └───prisma.service.ts
+│       └───users\
+│           ├───users.controller.ts
+│           ├───users.module.ts
+│           ├───users.service.ts
+│           └───dto\
+│               ├───create-user.dto.ts
+│               └───update-user.dto.ts
+├───components\
+│   ├───theme-provider.tsx
+│   └───ui\
+│       ├───accordion.tsx
+│       ├───alert-dialog.tsx
+│       ├───alert.tsx
+│       ├───aspect-ratio.tsx
+│       ├───avatar.tsx
+│       ├───badge.tsx
+│       ├───breadcrumb.tsx
+│       ├───button-group.tsx
+│       ├───button.tsx
+│       ├───calendar.tsx
+│       ├───card.tsx
+│       ├───carousel.tsx
+│       ├───chart.tsx
+│       ├───checkbox.tsx
+│       ├───collapsible.tsx
+│       ├───command.tsx
+│       ├───context-menu.tsx
+│       ├───dialog.tsx
+│       ├───drawer.tsx
+│       ├───dropdown-menu.tsx
+│       ├───empty.tsx
+│       ├───field.tsx
+│       ├───form.tsx
+│       ├───hover-card.tsx
+│       ├───input-group.tsx
+│       ├───input-otp.tsx
+│       ├───input.tsx
+│       ├───item.tsx
+│       ├───kbd.tsx
+│       ├───label.tsx
+│       ├───menubar.tsx
+│       ├───navigation-menu.tsx
+│       ├───pagination.tsx
+│       ├───popover.tsx
+│       ├───progress.tsx
+│       ├───radio-group.tsx
+│       ├───resizable.tsx
+│       ├───scroll-area.tsx
+│       ├───select.tsx
+│       ├───separator.tsx
+│       ├───sheet.tsx
+│       ├───sidebar.tsx
+│       ├───skeleton.tsx
+│       ├───slider.tsx
+│       ├───sonner.tsx
+│       ├───spinner.tsx
+│       ├───switch.tsx
+│       ├───table.tsx
+│       ├───tabs.tsx
+│       ├───textarea.tsx
+│       ├───toast.tsx
+│       ├───toaster.tsx
+│       ├───toggle-group.tsx
+│       ├───toggle.tsx
+│       ├───tooltip.tsx
+│       ├───use-mobile.tsx
+│       └───use-toast.ts
+├───frontend\
+│   ├───Dockerfile
+│   ├───FRONTEND_README.md
+│   ├───index.html
+│   ├───package-lock.json
+│   ├───package.json
+│   ├───postcss.config.js
+│   ├───tailwind.config.js
+│   ├───tsconfig.app.json
+│   ├───tsconfig.json
+│   ├───vite.config.ts
+│   ├───node_modules\...
+│   └───src\
+│       ├───index.css
+│       ├───main.tsx
+│       ├───components\
+│       │   ├───AuthorForm.tsx
+│       │   ├───AuthorList.tsx
+│       │   ├───BookCard.tsx
+│       │   ├───BookForm.tsx
+│       │   ├───BookList.tsx
+│       │   ├───BorrowHistory.tsx
+│       │   ├───Layout.tsx
+│       │   ├───ProtectedRoute.tsx
+│       │   └───Sidebar.tsx
+│       ├───context\
+│       │   └───AuthContext.tsx
+│       ├───hooks\
+│       │   └───useAuth.ts
+│       ├───pages\
+│       │   ├───App.tsx
+│       │   ├───AuthorsPage.tsx
+│       │   ├───BooksPage.tsx
+│       │   ├───BorrowedPage.tsx
+│       │   ├───DashboardPage.tsx
+│       │   ├───LoginPage.tsx
+│       │   ├───RegisterPage.tsx
+│       │   └───UsersPage.tsx
+│       ├───services\
+│       │   └───api.ts
+│       └───types\
+│           └───index.ts
+├───hooks\
+│   ├───use-mobile.ts
+│   └───use-toast.ts
+├───lib\
+│   └───utils.ts
+├───public\
+│   ├───apple-icon.png
+│   ├───icon-dark-32x32.png
+│   ├───icon-light-32x32.png
+│   ├───icon.svg
+│   ├───placeholder-logo.png
+│   ├───placeholder-logo.svg
+│   ├───placeholder-user.jpg
+│   ├───placeholder.jpg
+│   └───placeholder.svg
+└───styles\
+    └───globals.css
+```
+
+---
 
 ## Prerequisites
 
 Before you begin, ensure you have the following installed on your system:
 
 -   **Docker Desktop:** Includes Docker Engine and Docker Compose.
+-   **Node.js & npm:** For local development without Docker.
+
+---
 
 ## Getting Started with Docker Compose
 
@@ -42,8 +250,7 @@ services:
     environment:
       POSTGRES_USER: postgres    # <--- Change this
       POSTGRES_PASSWORD: password # <--- Change this
-      POSTGRES_DB: librarydb
-    # ...
+      POSTGRES_DB: librarydb    # ...
 ```
 
 ### 2. Configure Backend Environment Variables
@@ -52,60 +259,53 @@ The backend service requires several environment variables. Create a file named 
 
 Add the following content to `backend/.env`, customizing `JWT_SECRET` and `JWT_EXPIRES_IN` as desired:
 
+```dotenv
+DATABASE_URL="postgresql://postgres:password@db:5432/librarydb"
+JWT_SECRET="your_jwt_secret_key"
+JWT_EXPIRES_IN="1h"
 ```
-DATABASE_URL="postgresql://postgres:password@db:5432/librarydb?schema=public"
-JWT_SECRET="your_super_secret_jwt_key_here" # IMPORTANT: Change this to a strong, random key
-JWT_EXPIRES_IN="7d"
-NODE_ENV="development"
-PORT=3000
-```
-
-**Note:** The `DATABASE_URL` here uses `db` as the hostname, which is the name of the database service within the Docker network.
 
 ### 3. Configure Frontend Environment Variables
 
-The frontend service needs to know where to find the backend API. Create a file named `.env` inside the `frontend/` directory (i.e., `frontend/.env`).
+The frontend service also requires environment variables. Create a file named `.env` inside the `frontend/` directory (i.e., `frontend/.env`).
 
 Add the following content to `frontend/.env`:
 
+```dotenv
+VITE_API_BASE_URL="http://localhost:3000"
 ```
-VITE_API_BASE_URL="http://backend:3000"
-```
-
-**Note:** `http://backend:3000` refers to the backend service by its name within the Docker network.
 
 ### 4. Run the Application
 
-From the root directory of the project, execute the following command to build the Docker images and start all services in detached mode:
+Navigate to the root directory of the project and run the following command to build and start all services:
 
 ```bash
-docker-compose up --build -d
+docker compose up --build
 ```
 
 This command will:
-- Build the `backend` and `frontend` Docker images.
-- Start the `db`, `backend`, and `frontend` services.
-- Apply any pending Prisma database migrations.
-- Seed the database with initial data.
+- Build the Docker images for the backend and frontend.
+- Start the PostgreSQL database, backend, and frontend services.
+- Run Prisma migrations and seed the database (as defined in `docker-compose.yml`).
 
 ### 5. Access the Application
 
-Once all services are up and running, you can access the frontend application in your web browser:
+Once all services are up and running, you can access the application:
 
-[http://localhost:5173](http://localhost:5173)
+-   **Frontend:** Open your web browser and navigate to `http://localhost:5173`
+-   **Backend API:** The backend API will be running on `http://localhost:3000`
 
 ### 6. Demo Credentials
 
-You can log in with the following demo user:
+(Add demo credentials here if applicable, e.g., for a default admin user)
 
--   **Email:** `admin@library.com`
--   **Password:** `password123`
+---
 
 ## Troubleshooting Common Issues
 
 ### Network Error / Frontend cannot connect to Backend
 
-If you encounter a "network error" on the login page, ensure that `VITE_API_BASE_URL` in your `frontend/.env` file is correctly set to `http://backend:3000`. This allows the frontend container to communicate with the backend service within the Docker network.
+If your frontend cannot connect to the backend, ensure that the `VITE_API_BASE_URL` in `frontend/.env` is correctly set to `http://localhost:3000` when running locally, or `http://backend:3000` when running within Docker Compose.
 
 ### Prisma Migration Issues
 
@@ -115,11 +315,18 @@ If the backend container gets stuck or fails during startup with messages relate
 -   **Missing Migration Files:** Ensure that migration files exist in `backend/prisma/migrations`. If not, you'll need to generate them.
 
 To generate migrations locally (outside Docker):
-1.  Ensure you have Node.js and npm installed.
-2.  Ensure a local PostgreSQL database is running and accessible.
-3.  Temporarily modify `backend/.env` to point `DATABASE_URL` to your local PostgreSQL (e.g., `postgresql://USER:PASSWORD@localhost:5432/librarydb?schema=public`).
-4.  Navigate to the `backend` directory and run: `npx prisma migrate dev --name init`
-5.  Once migrations are generated, you can revert `backend/.env` if you plan to use the Dockerized database.
+
+1.  **Ensure Prerequisites:** You have Node.js and npm installed, and a local PostgreSQL database is running and accessible.
+2.  **Modify `backend/.env`:** Temporarily modify `backend/.env` to point `DATABASE_URL` to your local PostgreSQL (e.g., `postgresql://USER:PASSWORD@localhost:5432/librarydb?schema=public`).
+3.  **Navigate to Backend:**
+    ```bash
+    cd backend
+    ```
+4.  **Run Migration Command:**
+    ```bash
+    npx prisma migrate dev --name init
+    ```
+5.  **Revert `backend/.env`:** Once migrations are generated, you can revert `backend/.env` if you plan to use the Dockerized database.
 
 ### Invalid ELF Header / bcrypt error
 
@@ -144,6 +351,8 @@ If the frontend appears unstyled (white background, black text), it indicates th
 -   Ensure `frontend/src/index.css` contains the `@tailwind` directives.
 -   Rebuild your frontend Docker image after making any changes to these configuration files.
 
+---
+
 ## Local Development (Without Docker)
 
 If you prefer to run the frontend and backend directly on your machine:
@@ -151,17 +360,52 @@ If you prefer to run the frontend and backend directly on your machine:
 ### Backend Setup
 
 1.  **Prerequisites:** Node.js, npm, and a local PostgreSQL database server running.
-2.  **Navigate:** `cd backend`
-3.  **Install Dependencies:** `npm install`
-4.  **Configure `.env`:** Create `backend/.env` with `DATABASE_URL` pointing to your local PostgreSQL (e.g., `postgresql://USER:PASSWORD@localhost:5432/librarydb?schema=public`).
-5.  **Run Migrations:** `npx prisma migrate dev --name init`
-6.  **Seed Database:** `npx prisma db seed`
-7.  **Start Backend:** `npm run start:dev` (runs on `http://localhost:3000`)
+2.  **Navigate to Backend Directory:**
+    ```bash
+    cd backend
+    ```
+3.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
+4.  **Configure `.env`:** Create `backend/.env` with `DATABASE_URL` pointing to your local PostgreSQL.
+    ```dotenv
+    DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/librarydb?schema=public"
+    JWT_SECRET="your_jwt_secret_key"
+    JWT_EXPIRES_IN="1h"
+    ```
+    *(Replace `USER` and `PASSWORD` with your local PostgreSQL credentials)*
+5.  **Run Migrations:**
+    ```bash
+    npx prisma migrate dev --name init
+    ```
+6.  **Seed Database:**
+    ```bash
+    npx prisma db seed
+    ```
+7.  **Start Backend:**
+    ```bash
+    npm run start:dev
+    ```
+    The backend will run on `http://localhost:3000`.
 
 ### Frontend Setup
 
 1.  **Prerequisites:** Node.js, npm.
-2.  **Navigate:** `cd frontend`
-3.  **Install Dependencies:** `npm install`
-4.  **Configure `.env`:** Create `frontend/.env` with `VITE_API_BASE_URL="http://localhost:3000"`.
-5.  **Start Frontend:** `npm run dev` (runs on `http://localhost:5173`)
+2.  **Navigate to Frontend Directory:**
+    ```bash
+    cd frontend
+    ```
+3.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
+4.  **Configure `.env`:** Create `frontend/.env` with the API base URL.
+    ```dotenv
+    VITE_API_BASE_URL="http://localhost:3000"
+    ```
+5.  **Start Frontend:**
+    ```bash
+    npm run dev
+    ```
+    The frontend will run on `http://localhost:5173`
