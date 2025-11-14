@@ -1,6 +1,12 @@
-# Library Management System
+# :books: Library Management System
 
-This is a full-stack Library Management System built with a React/Vite frontend, a NestJS backend, and a PostgreSQL database, all orchestrated with Docker Compose.
+A full-stack Library Management System designed to manage books, authors, users, and borrowing records. This application provides a robust backend API, a dynamic frontend interface, and is easily deployable using Docker.
+
+**Technical Stack:**
+-   **Frontend:** React, Vite, TypeScript, Tailwind CSS
+-   **Backend:** NestJS, TypeScript, Prisma ORM
+-   **Database:** PostgreSQL
+-   **Deployment:** Docker, Docker Compose
 
 ---
 
@@ -15,6 +21,9 @@ This is a full-stack Library Management System built with a React/Vite frontend,
   - [4. Run the Application](#4-run-the-application)
   - [5. Access the Application](#5-access-the-application)
   - [6. Demo Credentials](#6-demo-credentials)
+- [Frontend Routes](#frontend-routes)
+- [REST API Reference](#rest-api-reference)
+- [Authentication (JWT)](#authentication-jwt)
 - [Troubleshooting Common Issues](#troubleshooting-common-issues)
   - [Network Error / Frontend cannot connect to Backend](#network-error--frontend-cannot-connect-to-backend)
   - [Prisma Migration Issues](#prisma-migration-issues)
@@ -297,7 +306,89 @@ Once all services are up and running, you can access the application:
 
 ### 6. Demo Credentials
 
-(Add demo credentials here if applicable, e.g., for a default admin user)
+The application is pre-seeded with the following demo accounts:
+
+| Role    | Email               | Password   |
+| :------ | :------------------ | :--------- |
+| Admin   | `admin@library.com` | `admin123` |
+| User    | `john@example.com`  | `user123`  |
+
+---
+
+## Testing
+
+To test the application, navigate to the login page at `http://localhost:5173/login` (or the appropriate URL if running without Docker Compose). You can use the following demo credentials:
+
+-   **Admin Login:**
+    -   **Email:** `admin@library.com`
+    -   **Password:** `admin123`
+-   **User Login:**
+    -   **Email:** `john@example.com`
+    -   **Password:** `user123`
+
+---
+
+## Frontend Routes
+
+The frontend application provides the following main routes:
+
+-   `/`: Home/Dashboard Page
+-   `/login`: User Login Page
+-   `/register`: User Registration Page
+-   `/books`: List of Books
+-   `/authors`: List of Authors
+-   `/borrowed`: User's Borrowed Books
+-   `/users`: User Management (Admin only)
+
+---
+
+## REST API Reference
+
+The backend API provides the following endpoints:
+
+### Authentication (`/auth`)
+-   `POST /auth/login`: Authenticate user and return JWT.
+-   `POST /auth/register`: Register a new user.
+-   `GET /auth/profile`: Get current user's profile (requires JWT).
+
+### Users (`/users`)
+-   `GET /users`: Get all users (Admin only, requires JWT).
+-   `GET /users/:id`: Get user by ID (Admin only, requires JWT).
+-   `PATCH /users/:id`: Update user by ID (Admin only, requires JWT).
+-   `DELETE /users/:id`: Delete user by ID (Admin only, requires JWT).
+
+### Authors (`/authors`)
+-   `POST /authors`: Create a new author (Admin only, requires JWT).
+-   `GET /authors`: Get all authors.
+-   `GET /authors/:id`: Get author by ID.
+-   `PATCH /authors/:id`: Update author by ID (Admin only, requires JWT).
+-   `DELETE /authors/:id`: Delete author by ID (Admin only, requires JWT).
+
+### Books (`/books`)
+-   `POST /books`: Create a new book (Admin only, requires JWT).
+-   `GET /books`: Get all books.
+-   `GET /books/:id`: Get book by ID.
+-   `PATCH /books/:id`: Update book by ID (Admin only, requires JWT).
+-   `DELETE /books/:id`: Delete book by ID (Admin only, requires JWT).
+
+### Borrow Records (`/borrow-records`)
+-   `POST /borrow-records/borrow`: Borrow a book (requires JWT).
+-   `POST /borrow-records/return`: Return a borrowed book (requires JWT).
+-   `GET /borrow-records`: Get all borrow records (Admin only, requires JWT).
+-   `GET /borrow-records/user/:userId`: Get borrow records for a specific user (Admin only, requires JWT).
+-   `GET /borrow-records/book/:bookId`: Get borrow records for a specific book (Admin only, requires JWT).
+-   `GET /borrow-records/my-borrows`: Get current user's borrow records (requires JWT).
+
+---
+
+## Authentication (JWT)
+
+The application uses JSON Web Tokens (JWT) for authentication.
+
+-   Upon successful login (`POST /auth/login`), the backend issues a JWT.
+-   This token should be stored on the client-side (e.g., in `localStorage` or `sessionStorage`).
+-   For subsequent authenticated requests to protected routes, the JWT must be included in the `Authorization` header as a Bearer token: `Authorization: Bearer <your_jwt_token>`.
+-   The token has an expiration time (`JWT_EXPIRES_IN` configured in `backend/.env`). The client-side application should handle token expiration and re-authentication.
 
 ---
 
@@ -322,11 +413,15 @@ To generate migrations locally (outside Docker):
     ```bash
     cd backend
     ```
-4.  **Run Migration Command:**
+4.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
+5.  **Run Migration Command:**
     ```bash
     npx prisma migrate dev --name init
     ```
-5.  **Revert `backend/.env`:** Once migrations are generated, you can revert `backend/.env` if you plan to use the Dockerized database.
+6.  **Revert `backend/.env`:** Once migrations are generated, you can revert `backend/.env` if you plan to use the Dockerized database.
 
 ### Invalid ELF Header / bcrypt error
 
